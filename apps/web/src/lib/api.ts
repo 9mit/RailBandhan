@@ -59,13 +59,24 @@ export async function apiFetch<T>(
     cache: "no-store",
     headers,
   };
-  let res = await fetch(`/api/v1${path}`, init);
-  if (
-    res.status === 401 &&
-    !path.startsWith("/auth/") &&
-    (await refreshSession())
-  )
+  let res: Response;
+  try {
     res = await fetch(`/api/v1${path}`, init);
+    if (
+      res.status === 401 &&
+      !path.startsWith("/auth/") &&
+      (await refreshSession())
+    ) {
+      res = await fetch(`/api/v1${path}`, init);
+    }
+  } catch (err: unknown) {
+    if (options?.signal?.aborted) throw err;
+    throw new ApiRequestError(
+      0,
+      "Unable to connect right now. Please check your internet connection and try again.",
+      "network_error",
+    );
+  }
   const text = await res.text();
   let body: any;
   try {
@@ -73,15 +84,27 @@ export async function apiFetch<T>(
   } catch {
     throw new ApiRequestError(
       res.status,
-      "The server returned an unexpected response. Please try again.",
+      "The server returned an unexpected response. Please try again shortly.",
     );
   }
-  if (!res.ok)
+  if (!res.ok) {
+    const rawMessage = body?.error?.message;
+    const fallbackMessage =
+      res.status === 404
+        ? "We couldn’t find the requested train, station, or record."
+        : res.status === 403
+          ? "You do not currently have access to this train compartment or private corridor."
+          : res.status === 429
+            ? "You’re moving a little fast. Please take a brief pause and try again in a moment."
+            : res.status >= 500
+              ? "Our railway servers are experiencing a brief delay. Please try again in a few moments."
+              : "Something didn’t load as expected. Please verify your details and try again.";
     throw new ApiRequestError(
       res.status,
-      body?.error?.message || res.statusText,
+      rawMessage || fallbackMessage,
       body?.error?.code,
     );
+  }
   // Restore an expired browser session during public-page session checks too.
   if (
     path === "/auth/session" &&

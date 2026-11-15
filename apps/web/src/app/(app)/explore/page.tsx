@@ -1,7 +1,9 @@
 "use client";
 import { Reveal } from "@/components/motion/reveal";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { Train } from "@/lib/types";
 import { ArrowUpRight, Search, TrainFront } from "lucide-react";
 import Image from "next/image";
@@ -32,21 +34,27 @@ export default function ExplorePage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
   useEffect(() => {
     const c = new AbortController();
+    setLoading(true);
+    setError("");
     apiFetch<{ trains: Train[] }>("/catalog/trains", { signal: c.signal })
       .then((x) => setTrains(x.trains))
-      .catch(() => {
+      .catch((e) => {
         if (!c.signal.aborted)
           setError(
-            "The route catalog isn’t available right now. Please try again later.",
+            formatErrorMessage(
+              e,
+              "The train route catalog isn’t available right now. Please try again later.",
+            ),
           );
       })
       .finally(() => {
         if (!c.signal.aborted) setLoading(false);
       });
     return () => c.abort();
-  }, []);
+  }, [revision]);
   const filtered = trains.filter((t) =>
     (t.number + " " + t.name)
       .toLowerCase()
@@ -118,9 +126,12 @@ export default function ExplorePage() {
             Opening the route catalog…
           </div>
         ) : error ? (
-          <div role="alert" className="rb-error-message">
-            {error}
-          </div>
+          <ErrorBanner
+            message={error}
+            onRetry={() => setRevision((r) => r + 1)}
+            onDismiss={() => setError("")}
+            className="my-4"
+          />
         ) : filtered.length === 0 ? (
           <div className="rb-loading" role="status">
             No matching train in the current catalog. Try another name or

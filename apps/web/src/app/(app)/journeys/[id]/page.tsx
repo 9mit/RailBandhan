@@ -2,7 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
+import { Card } from "@/components/ui/card";
 import { apiFetch, isForbidden } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { JourneyDetail } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
@@ -11,6 +14,7 @@ import {
   Compass,
   MessageSquare,
   Radio,
+  RotateCcw,
   Share2,
   Users,
 } from "lucide-react";
@@ -65,6 +69,8 @@ export default function JourneyPage({
   const [journey, setJourney] = useState<JourneyDetail | null>(null);
   const [tab, setTab] = useState<Tab>("live");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -97,6 +103,7 @@ export default function JourneyPage({
 
   useEffect(() => {
     async function load() {
+      setLoadError(null);
       try {
         const data = await apiFetch<JourneyDetail>(`/journeys/${id}`);
         setJourney(data);
@@ -105,12 +112,18 @@ export default function JourneyPage({
           router.replace("/journeys/restricted");
           return;
         }
+        setLoadError(
+          formatErrorMessage(
+            err,
+            "We couldn’t connect to this train journey. Please check your connection and try again.",
+          ),
+        );
       } finally {
         setLoading(false);
       }
     }
     load();
-  }, [id, router]);
+  }, [id, router, revision]);
 
   function shareJourney() {
     if (!journey) return;
@@ -143,10 +156,38 @@ export default function JourneyPage({
 
   if (!journey) {
     return (
-      <div className="p-12 text-center bento-glass rounded-2xl border border-[var(--rail-border)] text-[var(--rail-text)]">
-        <p className="text-sm text-[var(--rail-text-muted)]">
-          Journey not found.
-        </p>
+      <div className="max-w-md mx-auto py-12 px-4 text-center space-y-6">
+        <Card className="p-8 space-y-5 surreal-card">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff2ea] text-[#96361c] border border-[#e5b9a8]">
+            <Compass className="h-7 w-7" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="rb-screen-heading font-display text-2xl font-bold text-[var(--rail-text)]">
+              Journey Unavailable
+            </h2>
+            <p className="text-xs sm:text-sm text-[var(--rail-text-muted)] leading-relaxed">
+              {loadError ||
+                "We couldn’t find or connect to this train journey. It may have concluded or the link may be incomplete."}
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => {
+                setLoading(true);
+                setLoadError(null);
+                setRevision((r) => r + 1);
+              }}
+              leftIcon={<RotateCcw className="h-4 w-4" />}
+            >
+              Retry
+            </Button>
+            <ButtonLink href="/journeys" variant="royal" size="md">
+              View All Journeys
+            </ButtonLink>
+          </div>
+        </Card>
       </div>
     );
   }

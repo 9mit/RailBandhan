@@ -1120,12 +1120,28 @@ select {
   color: var(--forest);
 }
 .rb-error-message {
-  padding: 13px 16px;
-  border: 1px solid #e5b9a8;
-  background: #fff0e9;
-  color: #96361c;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid #e2b3a1;
+  background: #fff2ea;
+  color: #8c3218;
   font-size: 12px;
-  border-radius: 6px;
+  line-height: 1.5;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(140, 50, 24, 0.06);
+  animation: rb-error-fade 0.25s ease-out;
+}
+@keyframes rb-error-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .rb-discover-grid {
   display: grid;

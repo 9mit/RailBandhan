@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { PostCardSkeleton } from "@/components/ui/skeleton";
 import { apiFetch, isForbidden } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { Poll, Post } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
@@ -94,7 +96,7 @@ export function CommunityPanel({ journeyId }: { journeyId: string }) {
         return;
       }
       setActionError(
-        err instanceof Error ? err.message : "Failed to publish post.",
+        formatErrorMessage(err, "Failed to publish post. Please try again."),
       );
     } finally {
       setPosting(false);
@@ -122,7 +124,7 @@ export function CommunityPanel({ journeyId }: { journeyId: string }) {
         return;
       }
       setActionError(
-        err instanceof Error ? err.message : "Failed to create poll.",
+        formatErrorMessage(err, "Failed to create poll. Please try again."),
       );
     } finally {
       setPollPosting(false);
@@ -143,7 +145,7 @@ export function CommunityPanel({ journeyId }: { journeyId: string }) {
         return;
       }
       setActionError(
-        err instanceof Error ? err.message : "Failed to submit vote.",
+        formatErrorMessage(err, "Failed to record vote. Please try again."),
       );
     }
   }
@@ -214,9 +216,10 @@ export function CommunityPanel({ journeyId }: { journeyId: string }) {
   return (
     <div className="space-y-6">
       {actionError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-medium text-red-700">
-          {actionError}
-        </div>
+        <ErrorBanner
+          message={actionError}
+          onDismiss={() => setActionError(null)}
+        />
       )}
       {/* Post Composer Card */}
       <Card className="surreal-card p-5 space-y-4">

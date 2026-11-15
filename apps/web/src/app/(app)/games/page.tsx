@@ -5,8 +5,10 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Modal } from "@/components/ui/modal";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { GameSession, Journey } from "@/lib/types";
 import {
   Award,
@@ -100,7 +102,7 @@ function GamesContent() {
       router.push(`/games/${data.game.id}`);
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Could not create challenge.",
+        formatErrorMessage(err, "Could not create challenge. Please try again."),
       );
       setCreating(false);
     }
@@ -117,7 +119,9 @@ function GamesContent() {
       if (message.toLowerCase().includes("already")) {
         router.push(`/games/${gameId}`);
       } else {
-        setError(message);
+        setError(
+          formatErrorMessage(err, "Could not join match. Please try again."),
+        );
       }
     }
   }
@@ -165,9 +169,11 @@ function GamesContent() {
 
       {/* Error Feedback */}
       {error && (
-        <div className="rounded-2xl border border-rose-500/50 bg-rose-950/70 px-4 py-3 text-xs font-medium text-rose-200">
-          {error}
-        </div>
+        <ErrorBanner
+          message={error}
+          onDismiss={() => setError("")}
+          className="my-1"
+        />
       )}
 
       {/* Train Journey Selector */}
@@ -409,9 +415,11 @@ function GamesContent() {
       >
         <div className="space-y-5 pt-2">
           {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700">
-              {error}
-            </div>
+            <ErrorBanner
+              message={error}
+              variant="subtle"
+              onDismiss={() => setError("")}
+            />
           )}
           {!selectedJourneyId && (
             <div className="rounded-xl border border-amber-200 bg-[#f2e7d3] p-3 text-xs text-amber-900 space-y-2">

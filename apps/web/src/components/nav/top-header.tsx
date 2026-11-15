@@ -1,4 +1,5 @@
 "use client";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { apiFetch } from "@/lib/api";
 import { ArrowUpRight, Bell, LogOut, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
@@ -99,6 +100,15 @@ export function TopHeader({
           </Link>
         )}
       </div>
+      {error && (
+        <div className="absolute top-full right-4 mt-2 max-w-xs shadow-md z-50">
+          <ErrorBanner
+            message={error}
+            variant="subtle"
+            onDismiss={() => setError("")}
+          />
+        </div>
+      )}
     </header>
   );
 }

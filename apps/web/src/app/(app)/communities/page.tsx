@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { useApiResource } from "@/hooks/use-api-resource";
 import type { Journey } from "@/lib/types";
 import { ArrowUpRight, MessagesSquare } from "lucide-react";
@@ -63,12 +64,11 @@ export default function CommunitiesPage() {
             Finding your communities…
           </div>
         ) : error ? (
-          <div className="rb-error-message" role="alert">
-            {error}
-            <button onClick={refresh} className="ml-3 underline">
-              Try again
-            </button>
-          </div>
+          <ErrorBanner
+            message={error}
+            onRetry={refresh}
+            className="mb-6"
+          />
         ) : !data?.journeys.length ? (
           <EmptyState
             icon="passengers"

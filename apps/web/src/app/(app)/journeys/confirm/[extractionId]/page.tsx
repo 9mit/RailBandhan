@@ -3,8 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { ExtractedTicket } from "@/lib/types";
 import { ArrowRight, Eye, Train } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -55,9 +57,10 @@ export default function ConfirmExtractionPage({
         setBerth(t.berth != null ? String(t.berth) : "");
       } catch (err: unknown) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load extracted ticket data",
+          formatErrorMessage(
+            err,
+            "We couldn’t load the extracted ticket details. Please verify your connection or enter manually.",
+          ),
         );
       } finally {
         setLoading(false);
@@ -95,7 +98,10 @@ export default function ConfirmExtractionPage({
       }
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Failed to confirm journey",
+        formatErrorMessage(
+          err,
+          "Failed to confirm your journey. Please verify the journey coordinates and try again.",
+        ),
       );
       setSubmitting(false);
     }
@@ -315,9 +321,11 @@ export default function ConfirmExtractionPage({
               </div>
 
               {error && (
-                <div className="p-3.5 rounded-2xl bg-rose-950/80 border border-rose-500/50 text-xs font-medium text-rose-200">
-                  {error}
-                </div>
+                <ErrorBanner
+                  message={error}
+                  onDismiss={() => setError(null)}
+                  className="my-2"
+                />
               )}
 
               <div className="pt-2">

@@ -3,8 +3,10 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { MessageSkeleton } from "@/components/ui/skeleton";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { Conversation, DmMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
@@ -81,7 +83,10 @@ export default function DmThreadPage({
       }
     } catch (err) {
       setLoadError(
-        err instanceof Error ? err.message : "Conversation unavailable.",
+        formatErrorMessage(
+          err,
+          "Conversation unavailable. The passenger or message corridor may be paused.",
+        ),
       );
     } finally {
       setLoading(false);
@@ -114,7 +119,10 @@ export default function DmThreadPage({
       scrollToBottom();
     } catch (err) {
       setSendError(
-        err instanceof Error ? err.message : "Failed to send message.",
+        formatErrorMessage(
+          err,
+          "Failed to deliver message. Please check your connection.",
+        ),
       );
     } finally {
       setSending(false);
@@ -380,8 +388,12 @@ export default function DmThreadPage({
           </div>
 
           {sendError && (
-            <div className="px-5 py-2 border-t border-rose-500/50 bg-rose-950/70 text-xs font-medium text-rose-200">
-              {sendError}
+            <div className="px-4 py-2 border-t border-[var(--rail-border)] bg-[var(--rail-surface)]">
+              <ErrorBanner
+                message={sendError}
+                variant="subtle"
+                onDismiss={() => setSendError(null)}
+              />
             </div>
           )}
 

@@ -4,8 +4,10 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { MessageSkeleton } from "@/components/ui/skeleton";
 import { apiFetch, isForbidden } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { Message } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Radio, Send, Zap } from "lucide-react";
@@ -27,6 +29,7 @@ export function ChatPanel({ journeyId }: { journeyId: string }) {
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [currentUserHandle, setCurrentUserHandle] = useState<string | null>(
     null,
   );
@@ -74,6 +77,7 @@ export function ChatPanel({ journeyId }: { journeyId: string }) {
     if (!body.trim() || sending) return;
     const text = body.trim();
     setSending(true);
+    setSendError(null);
     try {
       await apiFetch(`/journeys/${journeyId}/messages`, {
         method: "POST",
@@ -85,7 +89,14 @@ export function ChatPanel({ journeyId }: { journeyId: string }) {
     } catch (err) {
       if (isForbidden(err)) {
         router.replace("/journeys/restricted");
+        return;
       }
+      setSendError(
+        formatErrorMessage(
+          err,
+          "Could not deliver your message right now. Please try again.",
+        ),
+      );
     } finally {
       setSending(false);
     }
@@ -212,27 +223,33 @@ export function ChatPanel({ journeyId }: { journeyId: string }) {
       </div>
 
       {/* Message Input Form */}
-      <form
-        onSubmit={handleSend}
-        className="p-3 border-t border-[var(--rail-border)] bg-[var(--rail-surface)] flex gap-2"
-      >
-        <input
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Message fellow passengers onboard…"
-          className="flex-1 rounded-xl border border-[var(--rail-border)] bg-[var(--rail-surface)] px-4 py-2.5 text-sm text-[var(--rail-text)] placeholder:text-[#8E867E] focus:outline-none focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
-        />
-        <Button
-          type="submit"
-          size="md"
-          variant="royal"
-          disabled={sending || !body.trim()}
-          isLoading={sending}
-          className="px-4 shrink-0 rounded-xl"
-        >
-          <Send className="h-4 w-4" />
-        </Button>
-      </form>
+      <div className="p-3 border-t border-[var(--rail-border)] bg-[var(--rail-surface)] space-y-2">
+        {sendError && (
+          <ErrorBanner
+            message={sendError}
+            variant="subtle"
+            onDismiss={() => setSendError(null)}
+          />
+        )}
+        <form onSubmit={handleSend} className="flex gap-2">
+          <input
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Message fellow passengers onboard…"
+            className="flex-1 rounded-xl border border-[var(--rail-border)] bg-[var(--rail-surface)] px-4 py-2.5 text-sm text-[var(--rail-text)] placeholder:text-[#8E867E] focus:outline-none focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20"
+          />
+          <Button
+            type="submit"
+            size="md"
+            variant="royal"
+            disabled={sending || !body.trim()}
+            isLoading={sending}
+            className="px-4 shrink-0 rounded-xl"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

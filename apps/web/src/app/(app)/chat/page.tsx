@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { useApiResource } from "@/hooks/use-api-resource";
 import type { Conversation, Journey } from "@/lib/types";
 import { ArrowUpRight, MessagesSquare, TrainFront } from "lucide-react";
@@ -33,12 +34,11 @@ export default function ChatPage() {
               Finding your lounges…
             </p>
           ) : journeys.error ? (
-            <p className="rb-error-message" role="alert">
-              {journeys.error}
-              <button className="underline ml-2" onClick={journeys.refresh}>
-                Retry
-              </button>
-            </p>
+            <ErrorBanner
+              message={journeys.error}
+              onRetry={journeys.refresh}
+              variant="subtle"
+            />
           ) : !journeys.data?.journeys.length ? (
             <EmptyState
               icon="train"
@@ -78,15 +78,11 @@ export default function ChatPage() {
               Opening your conversations…
             </p>
           ) : conversations.error ? (
-            <p className="rb-error-message" role="alert">
-              {conversations.error}
-              <button
-                className="underline ml-2"
-                onClick={conversations.refresh}
-              >
-                Retry
-              </button>
-            </p>
+            <ErrorBanner
+              message={conversations.error}
+              onRetry={conversations.refresh}
+              variant="subtle"
+            />
           ) : !conversations.data?.conversations.length ? (
             <EmptyState
               icon="chat"

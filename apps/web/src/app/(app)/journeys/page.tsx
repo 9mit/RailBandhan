@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { useApiResource } from "@/hooks/use-api-resource";
 import type { Journey } from "@/lib/types";
@@ -59,12 +60,11 @@ export default function JourneysPage() {
           Opening your journeys…
         </div>
       ) : error ? (
-        <div className="rb-error-message" role="alert">
-          {error}
-          <button className="underline ml-3" onClick={refresh}>
-            Try again
-          </button>
-        </div>
+        <ErrorBanner
+          message={error}
+          onRetry={refresh}
+          className="mb-6"
+        />
       ) : journeys.length === 0 ? (
         <EmptyState
           title={

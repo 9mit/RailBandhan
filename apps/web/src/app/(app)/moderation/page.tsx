@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { apiFetch, isForbidden } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { ModerationReport } from "@/lib/types";
 import { useEffect, useState } from "react";
 
@@ -29,9 +31,7 @@ export default function ModerationPage() {
         setForbidden(true);
       } else {
         setErrorMsg(
-          err instanceof Error
-            ? err.message
-            : "Failed to load moderation queue.",
+          formatErrorMessage(err, "Failed to load moderation queue."),
         );
       }
     } finally {
@@ -63,9 +63,7 @@ export default function ModerationPage() {
       });
       await load();
     } catch (err) {
-      setErrorMsg(
-        err instanceof Error ? err.message : "Failed to update report.",
-      );
+      setErrorMsg(formatErrorMessage(err, "Failed to update report."));
     } finally {
       setActing(null);
     }
@@ -95,9 +93,11 @@ export default function ModerationPage() {
       </div>
 
       {errorMsg && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-medium text-red-700">
-          {errorMsg}
-        </div>
+        <ErrorBanner
+          message={errorMsg}
+          onDismiss={() => setErrorMsg(null)}
+          variant="subtle"
+        />
       )}
 
       {loading ? (

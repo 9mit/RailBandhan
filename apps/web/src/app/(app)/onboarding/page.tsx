@@ -4,8 +4,10 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { safeNextPath } from "@/lib/navigation";
 import {
   ArrowLeft,
@@ -103,9 +105,10 @@ export default function OnboardingPage() {
       );
     } catch (err: unknown) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to save profile. Please try again.",
+        formatErrorMessage(
+          err,
+          "Failed to save profile. Please check your details and try again.",
+        ),
       );
       setSaving(false);
     }
@@ -144,6 +147,10 @@ export default function OnboardingPage() {
           />
         </div>
       </div>
+
+      {error && step !== 3 && (
+        <ErrorBanner message={error} onDismiss={() => setError(null)} />
+      )}
 
       {/* Step 1: Anonymous Identity */}
       {step === 1 && (
@@ -339,9 +346,7 @@ export default function OnboardingPage() {
           </div>
 
           {error && (
-            <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
-              {error}
-            </div>
+            <ErrorBanner message={error} onDismiss={() => setError(null)} />
           )}
 
           <div className="flex justify-between pt-4">

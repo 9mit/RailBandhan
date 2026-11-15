@@ -1,6 +1,8 @@
 "use client";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { safeNextPath } from "@/lib/navigation";
 import { ArrowUpRight, Eye, EyeOff, TrainFront } from "lucide-react";
 import Image from "next/image";
@@ -38,9 +40,10 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       router.refresh();
     } catch (e) {
       setError(
-        e instanceof Error
-          ? e.message
-          : "We couldn’t connect. Please try again.",
+        formatErrorMessage(
+          e,
+          "We couldn’t connect right now. Please verify your details and try again.",
+        ),
       );
       setLoading(false);
     }
@@ -83,9 +86,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </p>
           <form onSubmit={submit}>
             {error && (
-              <div role="alert" className="rb-error-message">
-                {error}
-              </div>
+              <ErrorBanner
+                message={error}
+                onDismiss={() => setError("")}
+                className="mb-4"
+              />
             )}
             <Input
               id="auth-email"

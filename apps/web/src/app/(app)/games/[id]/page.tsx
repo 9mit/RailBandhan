@@ -3,7 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Card } from "@/components/ui/card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { GameSession } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Dice5 } from "lucide-react";
@@ -52,7 +54,7 @@ export default function GameSessionPage({
       } catch (e) {
         if (!controller.signal.aborted)
           setError(
-            e instanceof Error ? e.message : "Unable to refresh the match.",
+            formatErrorMessage(e, "Unable to refresh the match coordinates."),
           );
       } finally {
         if (!controller.signal.aborted) {
@@ -89,9 +91,7 @@ export default function GameSessionPage({
       setGame(data.game);
     } catch (e) {
       setError(
-        e instanceof Error
-          ? e.message
-          : "The move could not be saved. Try again.",
+        formatErrorMessage(e, "The move could not be saved. Please try again."),
       );
     } finally {
       mutation.current++;
@@ -144,12 +144,11 @@ export default function GameSessionPage({
         </p>
       </header>
       {error && (
-        <p
-          role="alert"
-          className="rounded-2xl border border-[var(--rail-border)] bg-[var(--rail-surface)] p-4 text-sm"
-        >
-          {error}
-        </p>
+        <ErrorBanner
+          message={error}
+          onDismiss={() => setError("")}
+          className="mb-4"
+        />
       )}
       {loading ? (
         <Card className="p-12 text-center" aria-busy="true">

@@ -3,8 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { ArrowLeft, ArrowRight, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -90,7 +92,12 @@ function ManualJourneyForm() {
       });
       router.push(`/journeys/${data.journey.id}`);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create journey");
+      setError(
+        formatErrorMessage(
+          err,
+          "We couldn’t register this journey. Please check your train details and try again.",
+        ),
+      );
       setLoading(false);
     }
   }
@@ -185,9 +192,11 @@ function ManualJourneyForm() {
               </div>
 
               {error && (
-                <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-500/50 text-xs font-medium text-rose-200">
-                  {error}
-                </div>
+                <ErrorBanner
+                  message={error}
+                  onDismiss={() => setError(null)}
+                  className="my-2"
+                />
               )}
 
               <div className="pt-2">

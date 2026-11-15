@@ -1,5 +1,7 @@
 "use client";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { Clock3, MapPin, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 type Status = {
@@ -49,7 +51,10 @@ export function LivePanel({ journeyId }: { journeyId: string }) {
       } catch (e) {
         if (!controller.signal.aborted)
           setError(
-            e instanceof Error ? e.message : "Running status is unavailable.",
+            formatErrorMessage(
+              e,
+              "Live running coordinates could not be refreshed right now. The last recorded status remains visible below.",
+            ),
           );
       } finally {
         active = false;
@@ -96,9 +101,13 @@ export function LivePanel({ journeyId }: { journeyId: string }) {
   return (
     <div className="space-y-6">
       {error && (
-        <p className="rb-error-message" role="status">
-          {error} The last available update remains below.
-        </p>
+        <ErrorBanner
+          message={error}
+          title="Telemetry Update Paused"
+          onRetry={() => setRevision((r) => r + 1)}
+          onDismiss={() => setError("")}
+          variant="subtle"
+        />
       )}
       <div className="rb-ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">

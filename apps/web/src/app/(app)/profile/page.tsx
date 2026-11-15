@@ -1,9 +1,11 @@
 "use client";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type {
   AnonymousProfile,
   Badge,
@@ -66,9 +68,10 @@ export default function ProfilePage() {
       await work();
     } catch (e) {
       setError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
+        formatErrorMessage(
+          e,
+          "Something couldn’t be updated right now. Please try again.",
+        ),
       );
     } finally {
       setBusy("");
@@ -116,9 +119,11 @@ export default function ProfilePage() {
         </p>
       </div>
       {error && (
-        <p className="rb-error-message mb-5" role="alert">
-          {error}
-        </p>
+        <ErrorBanner
+          message={error}
+          onDismiss={() => setError("")}
+          className="mb-5"
+        />
       )}
       {success && (
         <p
@@ -445,9 +450,11 @@ export default function ProfilePage() {
             maxLength={128}
           />
           {error && (
-            <p className="rb-error-message" role="alert">
-              {error}
-            </p>
+            <ErrorBanner
+              message={error}
+              variant="subtle"
+              onDismiss={() => setError("")}
+            />
           )}
           <div className="flex gap-3">
             <Button

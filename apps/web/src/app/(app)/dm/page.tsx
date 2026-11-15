@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { useApiResource } from "@/hooks/use-api-resource";
 import type { Conversation } from "@/lib/types";
 import { ArrowUpRight, MessagesSquare } from "lucide-react";
@@ -24,12 +25,12 @@ export default function ConversationsPage() {
           Opening your conversations…
         </div>
       ) : error ? (
-        <p className="rb-error-message" role="alert">
-          {error}
-          <button onClick={refresh} className="underline ml-2">
-            Retry
-          </button>
-        </p>
+        <ErrorBanner
+          message={error}
+          onRetry={refresh}
+          variant="subtle"
+          className="mb-4"
+        />
       ) : !data?.conversations.length ? (
         <EmptyState
           icon="chat"

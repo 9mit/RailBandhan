@@ -1,5 +1,6 @@
 "use client";
 import { apiFetch } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { useCallback, useEffect, useState } from "react";
 /** Request-scoped state with cancellation and explicit retry; no private data in storage. */
 export function useApiResource<T>(path: string | null) {
@@ -23,9 +24,10 @@ export function useApiResource<T>(path: string | null) {
       .catch((e) => {
         if (!controller.signal.aborted)
           setError(
-            e instanceof Error
-              ? e.message
-              : "We couldn’t load this right now. Please try again.",
+            formatErrorMessage(
+              e,
+              "We couldn’t load this right now. Please try again.",
+            ),
           );
       })
       .finally(() => {

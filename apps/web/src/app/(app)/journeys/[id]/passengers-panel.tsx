@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiFetch, isForbidden } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import type { DiscoveredPassenger } from "@/lib/types";
 import { Award, MessageSquare, Shield, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -61,7 +63,10 @@ export function PassengersPanel({
       router.push(`/dm/${data.conversation.id}`);
     } catch (err) {
       setDmError(
-        err instanceof Error ? err.message : "Could not open direct message.",
+        formatErrorMessage(
+          err,
+          "Could not open direct message with this traveller right now.",
+        ),
       );
       setMessaging(null);
     }
@@ -105,9 +110,11 @@ export function PassengersPanel({
   return (
     <div className="space-y-5">
       {dmError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-medium text-red-700">
-          {dmError}
-        </div>
+        <ErrorBanner
+          message={dmError}
+          onDismiss={() => setDmError(null)}
+          variant="subtle"
+        />
       )}
       {/* Privacy Guarantee Banner */}
       <div className="flex items-center gap-3 rounded-2xl bg-[var(--rail-surface)]/90 px-4 py-3 border border-[#E5B254]/30 text-xs font-medium text-[#98512e]">

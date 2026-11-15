@@ -1,5 +1,7 @@
 "use client";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { apiUpload } from "@/lib/api";
+import { formatErrorMessage } from "@/lib/format-error";
 import { ArrowLeft, ArrowUpRight, ShieldCheck, Upload } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,9 +37,10 @@ export default function UploadPage() {
       router.push(`/journeys/confirm/${result.extraction_id}`);
     } catch (e) {
       setError(
-        e instanceof Error
-          ? e.message
-          : "The ticket could not be read. Try again or enter your journey manually.",
+        formatErrorMessage(
+          e,
+          "The ticket could not be read clearly. You can try uploading a clearer file or enter your journey manually.",
+        ),
       );
       setBusy(false);
       if (input.current) input.current.value = "";
@@ -123,9 +126,11 @@ export default function UploadPage() {
             </p>
           </section>
           {error && (
-            <p className="rb-error-message mt-5" role="alert">
-              {error}
-            </p>
+            <ErrorBanner
+              message={error}
+              onDismiss={() => setError("")}
+              className="mt-5"
+            />
           )}
           <div className="flex gap-3 text-xs text-[var(--rail-text-muted)] leading-relaxed p-5 mt-3">
             <ShieldCheck size={20} />
