@@ -1,0 +1,127 @@
+name: railbandhan
+x-app: &app
+  image: ${RAILBANDHAN_IMAGE:-railbandhan/web:local}
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile.web
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=128m,uid=1001,gid=1001
+    - /app/apps/web/.next/cache:rw,noexec,nosuid,size=64m,uid=1001,gid=1001
+  networks: [app, data]
+  logging:
+    driver: json-file
+    options: { max-size: 20m, max-file: "3" }
+services:
+  nginx:
+    image: nginx:1.28-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      RAILBANDHAN_HOST: ${RAILBANDHAN_HOST:?Set RAILBANDHAN_HOST}
+      NGINX_ENVSUBST_FILTER: RAILBANDHAN_HOST
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      web: { condition: service_healthy }
+    networks: [app]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 100
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options: { max-size: 20m, max-file: "3" }
+  web:
+    <<: *app
+    restart: unless-stopped
+    env_file: [../.env.production]
+    environment:
+      DATA_STORE: postgres
+      DATABASE_URL: postgresql://railbandhan:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/railbandhan
+      REDIS_URL: redis://:${REDIS_PASSWORD:?Set REDIS_PASSWORD}@valkey:6379/0
+      TICKET_STORAGE_DIR: /data/tickets
+      TRUST_PROXY: "true"
+    expose: ["3000"]
+    volumes: [tickets:/data/tickets]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      valkey: { condition: service_healthy }
+    pids_limit: 128
+    mem_limit: 2g
+    cpus: 2
+  migrate:
+    <<: *app
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://railbandhan:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/railbandhan
+    command: [node, --experimental-strip-types, scripts/migrate.mjs]
+    healthcheck: { disable: true }
+    depends_on:
+      postgres: { condition: service_healthy }
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: railbandhan
+      POSTGRES_DB: railbandhan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U railbandhan -d railbandhan"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [data]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 150
+    mem_limit: 2g
+    logging:
+      driver: json-file
+      options: { max-size: 20m, max-file: "3" }
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+    command:
+      - /bin/sh
+      - -ec
+      - 'umask 077; printf "requirepass %s\nappendonly yes\nmaxmemory 256mb\nmaxmemory-policy noeviction\n" "$$REDIS_PASSWORD" > /tmp/valkey.conf; exec valkey-server /tmp/valkey.conf'
+    volumes: [valkeydata:/data]
+    healthcheck:
+      test: [CMD-SHELL, "valkey-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [data]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 50
+    mem_limit: 384m
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: "3" }
+  retention-worker:
+    <<: *app
+    restart: unless-stopped
+    environment:
+      CRON_SECRET: ${CRON_SECRET:?Set CRON_SECRET}
+      RETENTION_URL: http://web:3000/api/v1/jobs/retention
+    command: [node, scripts/retention-worker.mjs]
+    healthcheck: { disable: true }
+    depends_on:
+      web: { condition: service_healthy }
+    mem_limit: 128m
+    pids_limit: 25
+networks:
+  app: {}
+  data: { internal: true }
+volumes:
+  pgdata: {}
+  valkeydata: {}
+  tickets: {}

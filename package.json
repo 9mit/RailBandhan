@@ -1,0 +1,19 @@
+{
+  "name": "railbandhan",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix apps/web run build",
+    "start": "npm --prefix apps/web run start",
+    "lint": "npm --prefix apps/web run lint",
+    "typecheck": "npm --prefix apps/web run typecheck && node apps/web/node_modules/typescript/bin/tsc --project tsconfig.json --noEmit",
+    "test": "npm --prefix apps/web run test",
+    "preflight": "node scripts/preflight-check.mjs",
+    "smoke-test": "node scripts/smoke-test.mjs",
+    "audit:prod": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "db:migrate": "node --experimental-strip-types scripts/migrate.mjs",
+    "test:postgres": "npm --prefix apps/web run test -- ../../tests/postgres-store.test.ts",
+    "db:backup": "node scripts/pg-backup.mjs",
+    "db:restore": "node scripts/pg-restore.mjs"
+  }
+}

@@ -1,0 +1,104 @@
+[
+  {
+    "id": "irctc-e-ticket-clean-01",
+    "type": "irctc_e_ticket",
+    "description": "Standard IRCTC Electronic Reservation Slip (ERS) - Clean Digital Text",
+    "rawText": "INDIAN RAILWAYS ELECTRONIC RESERVATION SLIP (ERS)\nPNR: 4523891045 | Train No. & Name: 12723 / TELANGANA EXP\nQuota: GENERAL (GN) | Class: 3A (THIRD AC)\nBooking Date: 10-Aug-2026 14:23:10 HRS\nFrom: SECUNDERABAD JN (SC) | To: NEW DELHI (NDLS)\nDate of Journey: 20-Aug-2026 | Departure: 06:00 | Arrival: 07:40 (+1 day)\nPassenger Details:\n1. Aarav Sharma | 28 | M | Confirm | B3 / 24 / MB\nTotal Fare: Rs 1845.00",
+    "groundTruth": {
+      "pnr": "4523891045",
+      "trainNumber": "12723",
+      "trainName": "Telangana Exp",
+      "journeyDate": "2026-08-20",
+      "boardingStationCode": "SC",
+      "destinationStationCode": "NDLS",
+      "coach": "B3",
+      "berth": "24",
+      "travelClass": "3A"
+    }
+  },
+  {
+    "id": "irctc-e-ticket-clean-02",
+    "type": "irctc_e_ticket",
+    "description": "Mumbai Rajdhani Express ERS - Clean Digital Text",
+    "rawText": "IRCTC e-Ticketing Service\nPNR: 9812736450 | TRAIN: 12951 / MUMBAI RAJDHANI\nCLASS: 2A | DATE: 2026-08-20\nFROM: BCT (MUMBAI CENTRAL) TO: NDLS (NEW DELHI)\nBOARDING AT: BCT | RESV UPTO: NDLS\nCOACH: A1 BERTH: 18 (LOWER)\nSTATUS: CNF",
+    "groundTruth": {
+      "pnr": "9812736450",
+      "trainNumber": "12951",
+      "trainName": "Mumbai Rajdhani",
+      "journeyDate": "2026-08-20",
+      "boardingStationCode": "BCT",
+      "destinationStationCode": "NDLS",
+      "coach": "A1",
+      "berth": "18",
+      "travelClass": "2A"
+    }
+  },
+  {
+    "id": "prs-counter-noisy-03",
+    "type": "prs_counter_ticket",
+    "description": "Scanned PRS Counter Ticket with typical OCR noise (I for 1, O for 0, spacing artifacts)",
+    "rawText": "INDIAN RAILWAYS PASSENGER TICKET\nPNR : 284-9102834\nTRN: I2723  TELANGANA EXP   DATE: I5/08/2026\nFROM: SC  TO: NGP  CLASS: SL\nCOACH: S4  SEAT/BERTH: 42 MB\nADULT: OI  CHILD: 00  KM: 580",
+    "groundTruth": {
+      "pnr": "2849102834",
+      "trainNumber": "12723",
+      "trainName": "Telangana Exp",
+      "journeyDate": "2026-08-15",
+      "boardingStationCode": "SC",
+      "destinationStationCode": "NGP",
+      "coach": "S4",
+      "berth": "42",
+      "travelClass": "SL"
+    }
+  },
+  {
+    "id": "bilingual-hindi-english-04",
+    "type": "bilingual_ers",
+    "description": "Bilingual IRCTC ERS with Hindi and English station/train names",
+    "rawText": "भारतीय रेल / INDIAN RAILWAYS\nपी.एन.आर / PNR: 6734192081\nगाड़ी सं. एवं नाम / Train No & Name: 12951 / मुंबई राजधानी / MUMBAI RAJDHANI\nयात्रा तिथि / Journey Date: 25-08-2026\nप्रस्थान स्टेशन / From: नई दिल्ली / NEW DELHI (NDLS)\nगंतव्य स्टेशन / To: मुंबई सेंट्रल / MUMBAI CENTRAL (BCT)\nश्रेणी / Class: 1A | कोच / Coach: H1 | बर्थ / Berth: 04",
+    "groundTruth": {
+      "pnr": "6734192081",
+      "trainNumber": "12951",
+      "trainName": "Mumbai Rajdhani",
+      "journeyDate": "2026-08-25",
+      "boardingStationCode": "NDLS",
+      "destinationStationCode": "BCT",
+      "coach": "H1",
+      "berth": "04",
+      "travelClass": "1A"
+    }
+  },
+  {
+    "id": "mobile-app-screenshot-05",
+    "type": "mobile_app_screenshot",
+    "description": "IRCTC Rail Connect mobile app booking confirmation screen",
+    "rawText": "Booking Confirmed!\nPNR: 8120493821\n12723 TELANGANA EXP\nSC (Secunderabad) → BPL (Bhopal Jn)\nThu, 20 Aug 2026\nClass: 3A | General Quota\nPassenger 1: Confirmed (Coach B2, Berth 35, Upper)\nEnjoy your journey with RailBandhan!",
+    "groundTruth": {
+      "pnr": "8120493821",
+      "trainNumber": "12723",
+      "trainName": "Telangana Exp",
+      "journeyDate": "2026-08-20",
+      "boardingStationCode": "SC",
+      "destinationStationCode": "BPL",
+      "coach": "B2",
+      "berth": "35",
+      "travelClass": "3A"
+    }
+  },
+  {
+    "id": "noisy-degraded-scan-06",
+    "type": "degraded_scan",
+    "description": "Low-contrast photographed thermal ticket with heavy noise",
+    "rawText": "IND1AN RA1LWAYS\nPNR : 419O823715\nTRN # 12951  RAJDHANI\nDT: 2026/08/20\nBCT -> BPL\nCL: 3A  COACH: B1  BERTH: 56",
+    "groundTruth": {
+      "pnr": "4190823715",
+      "trainNumber": "12951",
+      "trainName": "Rajdhani",
+      "journeyDate": "2026-08-20",
+      "boardingStationCode": "BCT",
+      "destinationStationCode": "BPL",
+      "coach": "B1",
+      "berth": "56",
+      "travelClass": "3A"
+    }
+  }
+]

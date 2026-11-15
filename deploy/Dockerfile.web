@@ -1,0 +1,35 @@
+# Build the immutable application artifact with the lockfile.
+FROM node:24-bookworm-slim AS dependencies
+WORKDIR /app
+COPY apps/web/package.json apps/web/package-lock.json ./apps/web/
+RUN npm --prefix apps/web ci --no-audit --no-fund
+
+FROM node:24-bookworm-slim AS builder
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=dependencies /app/apps/web/node_modules ./apps/web/node_modules
+COPY . .
+RUN npm --prefix apps/web run build
+
+FROM node:24-bookworm-slim AS runner
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
+# PDF/text recognition is local; native packages receive Debian security updates
+# whenever the image is rebuilt. The release workflow scans the resulting image.
+RUN apt-get update && apt-get install -y --no-install-recommends poppler-utils tesseract-ocr ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 1001 railbandhan \
+    && useradd --no-log-init --uid 1001 --gid railbandhan --system railbandhan \
+    && mkdir -p /data/tickets /app/apps/web/.next/cache \
+    && chown -R railbandhan:railbandhan /data /app
+COPY --from=builder --chown=1001:1001 /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=1001:1001 /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=1001:1001 /app/apps/web/public ./apps/web/public
+# Migration/job tools are part of the artifact, not copied into public assets.
+COPY --from=builder --chown=1001:1001 /app/scripts ./scripts
+COPY --from=builder --chown=1001:1001 /app/apps/web/src/server/store/schema.ts /app/apps/web/src/server/store/postgres-config.ts ./apps/web/src/server/store/
+USER 1001:1001
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=6s --start-period=30s --retries=3 \
+ CMD node -e "fetch('http://127.0.0.1:3000/api/health',{signal:AbortSignal.timeout(5000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node","apps/web/server.js"]

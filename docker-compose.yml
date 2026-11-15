@@ -1,0 +1,25 @@
+# Optional development dependencies. The web app runs locally with npm run dev.
+# Bind only to loopback. These disposable development credentials are never used
+# by deploy/docker-compose.prod.yml.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      {
+        POSTGRES_USER: railbandhan,
+        POSTGRES_PASSWORD: local-development-only,
+        POSTGRES_DB: railbandhan,
+      }
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: [pgdata_dev:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U railbandhan -d railbandhan"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  valkey:
+    image: valkey/valkey:8-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    command: [valkey-server, --appendonly, "yes"]
+    volumes: [valkey_dev:/data]
+volumes: { pgdata_dev: {}, valkey_dev: {} }

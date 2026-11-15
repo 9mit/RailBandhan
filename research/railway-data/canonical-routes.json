@@ -1,0 +1,68 @@
+{
+  "stations": [
+    { "code": "SC", "name": "Secunderabad Junction", "hindiName": "सिकंदराबाद जंक्शन", "aliases": ["SECUNDERABAD", "SECUNDERABAD JN", "HYDERABAD SC"], "lat": 17.4334, "lng": 78.5045 },
+    { "code": "KZJ", "name": "Kazipet Junction", "hindiName": "काजीपेट जंक्शन", "aliases": ["KAZIPET", "KZJ JN"], "lat": 17.9784, "lng": 79.5222 },
+    { "code": "WL", "name": "Warangal", "hindiName": "वारंगल", "aliases": ["WARANGAL JN"], "lat": 17.9689, "lng": 79.5941 },
+    { "code": "RDM", "name": "Ramagundam", "hindiName": "रामागुंडम", "aliases": ["RAMAGUNDAM"], "lat": 18.7618, "lng": 79.4746 },
+    { "code": "MCI", "name": "Manchiryal", "hindiName": "मंचेरियल", "aliases": ["MANCHERIAL"], "lat": 18.8711, "lng": 79.4619 },
+    { "code": "BPA", "name": "Bellampalli", "hindiName": "बेल्लमपल्ली", "aliases": ["BELLAMPALLI"], "lat": 19.0667, "lng": 79.4833 },
+    { "code": "SKZR", "name": "Sirpur Kaghaznagar", "hindiName": "सिरपुर कागजनगर", "aliases": ["KAGHAZNAGAR"], "lat": 19.3333, "lng": 79.4833 },
+    { "code": "BPQ", "name": "Balharshah Junction", "hindiName": "बल्लारशाह जंक्शन", "aliases": ["BALLARPUR", "BALHARSHAH"], "lat": 19.8519, "lng": 79.3519 },
+    { "code": "CD", "name": "Chandrapur", "hindiName": "चंद्रपुर", "aliases": ["CHANDRAPUR"], "lat": 19.9575, "lng": 79.2961 },
+    { "code": "NGP", "name": "Nagpur Junction", "hindiName": "नागपुर जंक्शन", "aliases": ["NAGPUR", "NAGPUR JN"], "lat": 21.1524, "lng": 79.0888 },
+    { "code": "BPL", "name": "Bhopal Junction", "hindiName": "भोपाल जंक्शन", "aliases": ["BHOPAL", "BHOPAL JN"], "lat": 23.2599, "lng": 77.4126 },
+    { "code": "VGLB", "name": "Virangana Lakshmibai Jhansi Junction", "hindiName": "वीरांगना लक्ष्मीबाई झाँसी जंक्शन", "aliases": ["JHS", "JHANSI", "JHANSI JN"], "lat": 25.4484, "lng": 78.5685 },
+    { "code": "GWL", "name": "Gwalior Junction", "hindiName": "ग्वालियर जंक्शन", "aliases": ["GWALIOR", "GWALIOR JN"], "lat": 26.2183, "lng": 78.1828 },
+    { "code": "AGC", "name": "Agra Cantt", "hindiName": "आगरा कैंट", "aliases": ["AGRA", "AGRA CANTT JN"], "lat": 27.1594, "lng": 77.9944 },
+    { "code": "MTJ", "name": "Mathura Junction", "hindiName": "मथुरा जंक्शन", "aliases": ["MATHURA", "MATHURA JN"], "lat": 27.4924, "lng": 77.6737 },
+    { "code": "NDLS", "name": "New Delhi", "hindiName": "नई दिल्ली", "aliases": ["NEW DELHI", "DELHI NDLS", "DLI"], "lat": 28.6415, "lng": 77.2207 },
+    { "code": "BCT", "name": "Mumbai Central", "hindiName": "मुंबई सेंट्रल", "aliases": ["MUMBAI CENTRAL", "BOMBAY CENTRAL", "MMCT"], "lat": 18.9696, "lng": 72.8193 },
+    { "code": "ST", "name": "Surat", "hindiName": "सूरत", "aliases": ["SURAT JN"], "lat": 21.2049, "lng": 72.8406 },
+    { "code": "BRC", "name": "Vadodara Junction", "hindiName": "वडोदरा जंक्शन", "aliases": ["VADODARA", "BARODA"], "lat": 22.3107, "lng": 73.1812 },
+    { "code": "RTM", "name": "Ratlam Junction", "hindiName": "रतलाम जंक्शन", "aliases": ["RATLAM"], "lat": 23.3441, "lng": 75.0456 },
+    { "code": "KOTA", "name": "Kota Junction", "hindiName": "कोटा जंक्शन", "aliases": ["KOTA"], "lat": 25.2238, "lng": 75.8774 },
+    { "code": "CSMT", "name": "Chhatrapati Shivaji Maharaj Terminus", "hindiName": "छत्रपति शिवाजी महाराज टर्मिनस", "aliases": ["MUMBAI CSMT", "VT", "CSTM"], "lat": 18.9401, "lng": 72.8354 }
+  ],
+  "trains": [
+    {
+      "number": "12723",
+      "name": "Telangana Express",
+      "type": "Superfast",
+      "origin": "SC",
+      "destination": "NDLS",
+      "stops": [
+        { "code": "SC", "index": 0, "km": 0, "arr": null, "dep": "06:00" },
+        { "code": "KZJ", "index": 1, "km": 132, "arr": "08:03", "dep": "08:05" },
+        { "code": "WL", "index": 2, "km": 142, "arr": "08:18", "dep": "08:20" },
+        { "code": "RDM", "index": 3, "km": 243, "arr": "09:34", "dep": "09:35" },
+        { "code": "MCI", "index": 4, "km": 257, "arr": "09:49", "dep": "09:50" },
+        { "code": "BPA", "index": 5, "km": 277, "arr": "10:04", "dep": "10:05" },
+        { "code": "SKZR", "index": 6, "km": 315, "arr": "10:39", "dep": "10:40" },
+        { "code": "BPQ", "index": 7, "km": 385, "arr": "12:15", "dep": "12:20" },
+        { "code": "CD", "index": 8, "km": 399, "arr": "12:38", "dep": "12:40" },
+        { "code": "NGP", "index": 9, "km": 593, "arr": "15:20", "dep": "15:25" },
+        { "code": "BPL", "index": 10, "km": 983, "arr": "21:45", "dep": "21:55" },
+        { "code": "VGLB", "index": 11, "km": 1275, "arr": "01:30", "dep": "01:38" },
+        { "code": "GWL", "index": 12, "km": 1372, "arr": "02:45", "dep": "02:47" },
+        { "code": "AGC", "index": 13, "km": 1490, "arr": "04:25", "dep": "04:27" },
+        { "code": "MTJ", "index": 14, "km": 1544, "arr": "05:03", "dep": "05:05" },
+        { "code": "NDLS", "index": 15, "km": 1685, "arr": "07:40", "dep": null }
+      ]
+    },
+    {
+      "number": "12951",
+      "name": "Mumbai Rajdhani Express",
+      "type": "Rajdhani",
+      "origin": "BCT",
+      "destination": "NDLS",
+      "stops": [
+        { "code": "BCT", "index": 0, "km": 0, "arr": null, "dep": "17:00" },
+        { "code": "ST", "index": 1, "km": 263, "arr": "19:43", "dep": "19:48" },
+        { "code": "BRC", "index": 2, "km": 393, "arr": "21:06", "dep": "21:16" },
+        { "code": "RTM", "index": 3, "km": 653, "arr": "00:02", "dep": "00:05" },
+        { "code": "KOTA", "index": 4, "km": 920, "arr": "03:15", "dep": "03:20" },
+        { "code": "NDLS", "index": 5, "km": 1386, "arr": "08:32", "dep": null }
+      ]
+    }
+  ]
+}
