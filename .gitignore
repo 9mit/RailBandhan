@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js & Build Outputs
+.next/
+out/
+build/
+dist/
+.turbo/
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+.eslintcache
+
+# Local SQLite & Data Vault
+.data/
+**/.data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Environment & Secret Files (Never Commit Secrets)
+.env
+.env.local
+.env.*.local
+*.env
+*.env.local
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Temporary & Log Files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+tmp/
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Secret-bearing runtime and operational artifacts
+**/.env*
+!**/.env.example
+!**/.env.production.example
+backups/
+deploy/ssl/
+
+.next-dev/
+
+# Documentation & Non-production research
+docs/
+research/
+supabase/
+
